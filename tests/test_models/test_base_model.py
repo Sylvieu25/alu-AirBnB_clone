@@ -5,7 +5,7 @@ import uuid
 from datetime import datetime
 from time import sleep
 
-from models.base_model import BaseModel
+from models.base_model import BaseModel, TIME_FORMAT
 
 
 class TestBaseModelInit(unittest.TestCase):
@@ -150,8 +150,17 @@ class TestBaseModelToDict(unittest.TestCase):
         d = bm.to_dict()
         self.assertIsInstance(d["created_at"], str)
         self.assertIsInstance(d["updated_at"], str)
-        self.assertEqual(d["created_at"], bm.created_at.isoformat())
-        self.assertEqual(d["updated_at"], bm.updated_at.isoformat())
+        self.assertEqual(
+            d["created_at"], bm.created_at.strftime(TIME_FORMAT))
+        self.assertEqual(
+            d["updated_at"], bm.updated_at.strftime(TIME_FORMAT))
+
+    def test_timestamps_keep_microseconds(self):
+        """The ISO strings keep microseconds even when they are zero."""
+        bm = BaseModel()
+        bm.created_at = datetime(2017, 9, 28, 21, 3, 54)
+        self.assertEqual(
+            bm.to_dict()["created_at"], "2017-09-28T21:03:54.000000")
 
     def test_iso_strings_convert_back(self):
         """The ISO strings convert back to the original datetimes."""
@@ -188,6 +197,111 @@ class TestBaseModelToDict(unittest.TestCase):
         """to_dict() does not accept arguments."""
         with self.assertRaises(TypeError):
             BaseModel().to_dict(None)
+
+
+class TestBaseModelFromDict(unittest.TestCase):
+    """Tests for re-creating a BaseModel instance from a dictionary."""
+
+    def setUp(self):
+        """Create an instance and its dictionary representation."""
+        self.bm = BaseModel()
+        self.bm.name = "My_First_Model"
+        self.bm.my_number = 89
+        self.bm_dict = self.bm.to_dict()
+
+    def test_same_attributes(self):
+        """The new instance has exactly the same attributes."""
+        new_bm = BaseModel(**self.bm_dict)
+        self.assertEqual(new_bm.__dict__, self.bm.__dict__)
+
+    def test_same_id(self):
+        """The new instance keeps the original id."""
+        self.assertEqual(BaseModel(**self.bm_dict).id, self.bm.id)
+
+    def test_dates_are_datetime(self):
+        """created_at and updated_at are converted back to datetime."""
+        new_bm = BaseModel(**self.bm_dict)
+        self.assertIsInstance(new_bm.created_at, datetime)
+        self.assertIsInstance(new_bm.updated_at, datetime)
+
+    def test_dates_values(self):
+        """created_at and updated_at keep their original values."""
+        new_bm = BaseModel(**self.bm_dict)
+        self.assertEqual(new_bm.created_at, self.bm.created_at)
+        self.assertEqual(new_bm.updated_at, self.bm.updated_at)
+
+    def test_class_key_not_attribute(self):
+        """The __class__ key is not added as an attribute."""
+        new_bm = BaseModel(**self.bm_dict)
+        self.assertNotIn("__class__", new_bm.__dict__)
+        self.assertIs(type(new_bm), BaseModel)
+
+    def test_custom_attributes(self):
+        """Custom attributes are re-created with their values."""
+        new_bm = BaseModel(**self.bm_dict)
+        self.assertEqual(new_bm.name, "My_First_Model")
+        self.assertEqual(new_bm.my_number, 89)
+
+    def test_not_same_object(self):
+        """The new instance is a different object from the original."""
+        new_bm = BaseModel(**self.bm_dict)
+        self.assertIsNot(new_bm, self.bm)
+
+    def test_str_matches(self):
+        """The new instance prints the same as the original."""
+        self.assertEqual(str(BaseModel(**self.bm_dict)), str(self.bm))
+
+    def test_round_trip(self):
+        """to_dict() of the new instance equals the original dict."""
+        new_bm = BaseModel(**self.bm_dict)
+        self.assertEqual(new_bm.to_dict(), self.bm_dict)
+
+    def test_from_known_dict(self):
+        """An instance is created from a hand-written dictionary."""
+        data = {
+            "id": "56d43177-cc5f-4d6c-a0c1-e167f8c27337",
+            "created_at": "2017-09-28T21:03:54.052298",
+            "updated_at": "2017-09-28T21:03:54.052302",
+            "__class__": "BaseModel",
+            "name": "My_First_Model",
+        }
+        bm = BaseModel(**data)
+        self.assertEqual(bm.id, data["id"])
+        self.assertEqual(
+            bm.created_at, datetime(2017, 9, 28, 21, 3, 54, 52298))
+        self.assertEqual(
+            bm.updated_at, datetime(2017, 9, 28, 21, 3, 54, 52302))
+        self.assertEqual(bm.name, "My_First_Model")
+
+    def test_empty_kwargs_creates_new(self):
+        """Empty kwargs create a brand new instance."""
+        bm = BaseModel(**{})
+        self.assertIsInstance(bm.id, str)
+        self.assertIsInstance(bm.created_at, datetime)
+        self.assertNotEqual(bm.id, self.bm.id)
+
+    def test_args_are_ignored(self):
+        """Positional arguments are not used."""
+        bm = BaseModel("unused", 12)
+        self.assertNotIn("unused", bm.__dict__.values())
+        self.assertIsInstance(bm.id, str)
+
+    def test_args_and_kwargs(self):
+        """With args and kwargs, only kwargs are used."""
+        bm = BaseModel("unused", **self.bm_dict)
+        self.assertEqual(bm.id, self.bm.id)
+
+    def test_invalid_date_raises(self):
+        """A date string in the wrong format raises ValueError."""
+        with self.assertRaises(ValueError):
+            BaseModel(id="1", created_at="28/09/2017",
+                      updated_at="28/09/2017")
+
+    def test_zero_microseconds_round_trip(self):
+        """A datetime with zero microseconds survives the round trip."""
+        self.bm.created_at = datetime(2017, 9, 28, 21, 3, 54)
+        new_bm = BaseModel(**self.bm.to_dict())
+        self.assertEqual(new_bm.created_at, self.bm.created_at)
 
 
 if __name__ == "__main__":
