@@ -3,7 +3,7 @@
 import uuid
 from datetime import datetime
 
-from models import storage
+import models
 
 TIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%f"
 
@@ -30,7 +30,7 @@ class BaseModel:
             self.id = str(uuid.uuid4())
             self.created_at = datetime.now()
             self.updated_at = self.created_at
-            storage.new(self)
+            models.storage.new(self)
 
     def __str__(self):
         """Return the string representation of the instance."""
@@ -40,7 +40,7 @@ class BaseModel:
     def save(self):
         """Update updated_at to now and save all objects to the file."""
         self.updated_at = datetime.now()
-        storage.save()
+        models.storage.save()
 
     def to_dict(self):
         """Return a dictionary with all keys/values of the instance.
