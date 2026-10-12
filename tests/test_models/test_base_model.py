@@ -1,11 +1,29 @@
 #!/usr/bin/python3
 """Unit tests for the BaseModel class defined in models/base_model.py."""
+import os
 import unittest
 import uuid
 from datetime import datetime
 from time import sleep
 
 from models.base_model import BaseModel, TIME_FORMAT
+
+FILE = "file.json"
+BACKUP = "file.json.bak"
+
+
+def setUpModule():
+    """Move the real file.json out of the way before the tests run."""
+    if os.path.exists(FILE):
+        os.rename(FILE, BACKUP)
+
+
+def tearDownModule():
+    """Put the real file.json back after the tests run."""
+    if os.path.exists(FILE):
+        os.remove(FILE)
+    if os.path.exists(BACKUP):
+        os.rename(BACKUP, FILE)
 
 
 class TestBaseModelInit(unittest.TestCase):
