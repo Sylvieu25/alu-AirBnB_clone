@@ -2,8 +2,6 @@
 """Defines the FileStorage class, a JSON file storage engine for HBnB."""
 import json
 
-from models.base_model import BaseModel
-
 
 class FileStorage:
     """Serializes instances to a JSON file and deserializes them back.
@@ -15,7 +13,6 @@ class FileStorage:
 
     __file_path = "file.json"
     __objects = {}
-    classes = {"BaseModel": BaseModel}
 
     def all(self):
         """Return the dictionary of all stored objects."""
@@ -33,6 +30,12 @@ class FileStorage:
         with open(FileStorage.__file_path, "w", encoding="utf-8") as f:
             json.dump(data, f)
 
+    def classes(self):
+        """Return the classes that can be stored, by class name."""
+        from models.base_model import BaseModel
+
+        return {"BaseModel": BaseModel}
+
     def reload(self):
         """Deserialize the JSON file into the stored objects.
 
@@ -43,6 +46,7 @@ class FileStorage:
                 data = json.load(f)
         except FileNotFoundError:
             return
+        classes = self.classes()
         for key, value in data.items():
-            cls = FileStorage.classes[value["__class__"]]
+            cls = classes[value["__class__"]]
             FileStorage.__objects[key] = cls(**value)
