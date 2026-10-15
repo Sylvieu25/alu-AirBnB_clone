@@ -130,6 +130,7 @@ alu-AirBnB_clone/
 │           └── test_file_storage.py
 └── web_static/
     ├── 0-index.html
+    ├── 1-index.html
     ├── styles/
     └── images/
 ```
@@ -161,6 +162,7 @@ Constraints:
 | File | Description |
 |------|-------------|
 | `0-index.html` | Header and footer using inline styles |
+| `1-index.html` | Header and footer using a `style` tag in the `head` |
 
 ## Author
 
