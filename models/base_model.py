@@ -1,11 +1,16 @@
 #!/usr/bin/python3
 """Defines the BaseModel class, the parent class of all HBnB models."""
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 
 import models
 
 TIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%f"
+
+
+def utc_now():
+    """Return the current UTC date and time, without timezone info."""
+    return datetime.now(timezone.utc).replace(tzinfo=None)
 
 
 class BaseModel:
@@ -20,8 +25,8 @@ class BaseModel:
                 If empty, a new instance with a new id is created.
         """
         self.id = str(uuid.uuid4())
-        self.created_at = datetime.today()
-        self.updated_at = datetime.today()
+        self.created_at = utc_now()
+        self.updated_at = utc_now()
         if kwargs:
             for key, value in kwargs.items():
                 if key == "__class__":
@@ -39,7 +44,7 @@ class BaseModel:
 
     def save(self):
         """Update updated_at to now and save all objects to the file."""
-        self.updated_at = datetime.today()
+        self.updated_at = utc_now()
         models.storage.save()
 
     def to_dict(self):
