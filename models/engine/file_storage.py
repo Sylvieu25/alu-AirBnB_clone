@@ -16,18 +16,18 @@ class FileStorage:
 
     def all(self):
         """Return the dictionary of all stored objects."""
-        return self.__objects
+        return FileStorage.__objects
 
     def new(self, obj):
         """Add obj to the stored objects with the key <class name>.<id>."""
         key = "{}.{}".format(type(obj).__name__, obj.id)
-        self.__objects[key] = obj
+        FileStorage.__objects[key] = obj
 
     def save(self):
         """Serialize all stored objects to the JSON file."""
         data = {key: obj.to_dict()
-                for key, obj in self.__objects.items()}
-        with open(self.__file_path, "w", encoding="utf-8") as f:
+                for key, obj in FileStorage.__objects.items()}
+        with open(FileStorage.__file_path, "w", encoding="utf-8") as f:
             json.dump(data, f)
 
     def classes(self):
@@ -42,11 +42,10 @@ class FileStorage:
         If the JSON file does not exist, nothing happens.
         """
         try:
-            with open(self.__file_path, "r", encoding="utf-8") as f:
+            with open(FileStorage.__file_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
         except FileNotFoundError:
             return
         classes = self.classes()
-        for key, value in data.items():
-            cls = classes[value["__class__"]]
-            self.__objects[key] = cls(**value)
+        for value in data.values():
+            self.new(classes[value["__class__"]](**value))

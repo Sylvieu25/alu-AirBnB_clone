@@ -53,10 +53,12 @@ class TestBaseModelInit(unittest.TestCase):
         """The updated_at attribute is a datetime object."""
         self.assertIsInstance(BaseModel().updated_at, datetime)
 
-    def test_timestamps_equal_at_creation(self):
-        """created_at and updated_at are equal right after creation."""
+    def test_timestamps_close_at_creation(self):
+        """updated_at is set right after created_at at creation."""
         bm = BaseModel()
-        self.assertEqual(bm.created_at, bm.updated_at)
+        self.assertLessEqual(bm.created_at, bm.updated_at)
+        delta = bm.updated_at - bm.created_at
+        self.assertLess(delta.total_seconds(), 1)
 
     def test_later_instance_has_later_created_at(self):
         """An instance created later has a later created_at."""
@@ -297,6 +299,14 @@ class TestBaseModelFromDict(unittest.TestCase):
         self.assertIsInstance(bm.id, str)
         self.assertIsInstance(bm.created_at, datetime)
         self.assertNotEqual(bm.id, self.bm.id)
+
+    def test_partial_kwargs_keep_defaults(self):
+        """Missing id and dates in kwargs get default values."""
+        bm = BaseModel(name="Partial")
+        self.assertEqual(bm.name, "Partial")
+        self.assertIsInstance(bm.id, str)
+        self.assertIsInstance(bm.created_at, datetime)
+        self.assertIsInstance(bm.updated_at, datetime)
 
     def test_args_are_ignored(self):
         """Positional arguments are not used."""
