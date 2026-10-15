@@ -1,4 +1,4 @@
-# AirBnB Clone - The Console
+# AirBnB Clone
 
 ## Description
 
@@ -117,17 +117,21 @@ alu-AirBnB_clone/
 │   └── engine/
 │       ├── __init__.py
 │       └── file_storage.py
-└── tests/
-    └── test_models/
-        ├── test_base_model.py
-        ├── test_user.py
-        ├── test_state.py
-        ├── test_city.py
-        ├── test_amenity.py
-        ├── test_place.py
-        ├── test_review.py
-        └── test_engine/
-            └── test_file_storage.py
+├── tests/
+│   └── test_models/
+│       ├── test_base_model.py
+│       ├── test_user.py
+│       ├── test_state.py
+│       ├── test_city.py
+│       ├── test_amenity.py
+│       ├── test_place.py
+│       ├── test_review.py
+│       └── test_engine/
+│           └── test_file_storage.py
+└── web_static/
+    ├── 0-index.html
+    ├── styles/
+    └── images/
 ```
 
 ## Running the Tests
@@ -141,6 +145,22 @@ Tests also pass in non-interactive mode:
 ```bash
 $ echo "python3 -m unittest discover tests" | bash
 ```
+
+## Web Static
+
+The `web_static` folder holds the static front end of the project: the HTML/CSS pages that will later be turned into dynamic templates. The pages are built step by step from mockups, starting with inline styles and moving to external stylesheets.
+
+Constraints:
+
+- No JavaScript
+- No `img`, `embed` or `iframe` tags (images are applied as CSS backgrounds)
+- No `id` selectors and no `!important` in CSS
+- All CSS files in `web_static/styles/`, all images in `web_static/images/`
+- All markup must pass [W3C validation](https://validator.w3.org/)
+
+| File | Description |
+|------|-------------|
+| `0-index.html` | Header and footer using inline styles |
 
 ## Author
 
