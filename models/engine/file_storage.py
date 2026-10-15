@@ -33,8 +33,9 @@ class FileStorage:
     def classes(self):
         """Return the classes that can be stored, by class name."""
         from models.base_model import BaseModel
+        from models.user import User
 
-        return {"BaseModel": BaseModel}
+        return {"BaseModel": BaseModel, "User": User}
 
     def reload(self):
         """Deserialize the JSON file into the stored objects.
