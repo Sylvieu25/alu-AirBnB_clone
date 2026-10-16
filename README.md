@@ -133,6 +133,7 @@ alu-AirBnB_clone/
     ├── 1-index.html
     ├── 2-index.html
     ├── 3-index.html
+    ├── 4-index.html
     ├── styles/
     └── images/
 ```
@@ -167,6 +168,7 @@ Constraints:
 | `1-index.html` | Header and footer using a `style` tag in the `head` |
 | `2-index.html` | Header and footer using external CSS files in `styles/` |
 | `3-index.html` | Header with logo, footer with text, favicon, using external CSS files |
+| `4-index.html` | Adds a centered container with a filters section and a search button |
 
 ## Author
 
