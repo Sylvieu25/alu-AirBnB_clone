@@ -136,6 +136,7 @@ alu-AirBnB_clone/
     ├── 4-index.html
     ├── 5-index.html
     ├── 6-index.html
+    ├── 7-index.html
     ├── styles/
     └── images/
 ```
@@ -173,6 +174,7 @@ Constraints:
 | `4-index.html` | Adds a centered container with a filters section and a search button |
 | `5-index.html` | Adds States and Amenities filters to the filters section |
 | `6-index.html` | Adds CSS-only hover dropdowns (popovers) to the filters |
+| `7-index.html` | Adds a Places section listing places as article cards |
 
 ## Author
 
