@@ -135,6 +135,7 @@ alu-AirBnB_clone/
     ├── 3-index.html
     ├── 4-index.html
     ├── 5-index.html
+    ├── 6-index.html
     ├── styles/
     └── images/
 ```
@@ -171,6 +172,7 @@ Constraints:
 | `3-index.html` | Header with logo, footer with text, favicon, using external CSS files |
 | `4-index.html` | Adds a centered container with a filters section and a search button |
 | `5-index.html` | Adds States and Amenities filters to the filters section |
+| `6-index.html` | Adds CSS-only hover dropdowns (popovers) to the filters |
 
 ## Author
 
